@@ -1,0 +1,54 @@
+steps performed during this whole process:
+1. Installed mongod
+2. Installed Studio 3t
+3. Run this command from powershell to keep mongodb running on local machine
+    /installedSOftwares/mongodb/mongodb/installed_server_1/bin/mongod.exe --dbpath=/installedsoftwares/mongodb/mongodb-data
+4. install mongodb module with same version as your installed mongodb application
+5. 
+
+
+
+MongoDb Commands:
+1. db.collection('collectionNameStr').insertOne({'JSON Formatted Data'})
+2. db.collection('collectionNameStr').insertOne({'JSON Formatted Data'},(error,result)=>{})
+3. db.collection('collectionNameStr').insertMany([{'JSON Formatted Data'},{'JSON Formatted Data'}],(error,result)=>{})
+4. We Can generate our own objectID from mongoDB
+    const { MongoClient, ObjectID } = require('mongodb')
+    const id = new ObjectID()
+    console.log(id)
+
+5. db.collection('users').findOne({},()=>{})
+6. db.collection('users').find()
+    This returns cursor not the complete list of documents.
+7. updateOne
+8. updateMany
+9. deleteOne
+10. deleteMany
+
+MongooseJs
+11. ODM(Object Document Mapper)
+12. Installed mongoose 4.13.21
+
+REST API: Representational State Transfer
+CREATE: POST
+READ: GET
+UPDATE: PATCH
+DELETE: DELETE
+
+Installed Nodemon
+    npm i nodemom@2.0.16 --save-dev
+Installed express
+    npm i express@4.16.4
+Postman.
+-Running postman on localhost
+Promise Chaining
+Async Await
+    -Async functions always returns Promise
+
+Routes
+Installed bcryptjs to hide password
+Mongoose Middleware
+JSON WebTokens(JWT)
+installed jsonwebtoken@8.5.1
+JWT token contains 3 parts base64 header, base64 Payload/Body and Signature seperated by period(.)
+Experss Middleware

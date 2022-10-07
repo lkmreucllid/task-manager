@@ -1,0 +1,24 @@
+{
+    "name": "task-manager",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start": "node src/index.js",
+        "dev": "nodemon src/index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "express": "^4.16.4",
+        "jsonwebtoken": "^8.5.1",
+        "mongodb": "^3.4.1",
+        "mongoose": "^4.13.21",
+        "validator": "^13.7.0"
+    },
+    "description": "",
+    "devDependencies": {
+        "nodemon": "^2.0.16"
+    }
+}
