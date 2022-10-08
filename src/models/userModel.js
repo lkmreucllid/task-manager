@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const Task = require('./taskModel')
 
 
 const userSchema = new mongoose.Schema({
@@ -50,6 +51,13 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
+//Adding Virtual to get tasks by specific user.
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'author'
+})
+
 //This will be automatically added to all the request which uses userSchema, because express uses JSON.stringify when we use res.send and which inturn use toJSON.
 userSchema.methods.toJSON = function() {
     const user = this
@@ -82,12 +90,20 @@ userSchema.statics.findByCredentials = async(email, password) => {
     return user
 }
 
+//Hashing Password before Saving
 userSchema.pre('save', async function(next) {
     const user = this
-
     if (user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, 8)
     }
+    next()
+})
+
+//Deleting all the task created by User when a user is deleted.
+
+userSchema.pre('remove', async function(next) {
+    const user = this
+    await Task.deleteMany({ author: user._id })
     next()
 })
 

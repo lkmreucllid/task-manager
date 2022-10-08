@@ -1,10 +1,15 @@
 const express = require('express')
 const Task = require('../models/taskModel')
+const auth = require('../middleware/auth')
 const taskRouter = express.Router()
 
 //Create Task using Async Await
-taskRouter.post('/tasks', async(req, res) => {
-    const task = new Task(req.body)
+taskRouter.post('/tasks', auth, async(req, res) => {
+    //const task = new Task(req.body)
+    const task = new Task({
+        ...req.body,
+        author: req.user._id
+    })
     try {
         await task.save()
         res.status(201).send(task)
@@ -14,20 +19,25 @@ taskRouter.post('/tasks', async(req, res) => {
 })
 
 //Reading multiple tasks using Async Await
-taskRouter.get('/tasks', async(req, res) => {
+taskRouter.get('/tasks', auth, async(req, res) => {
     try {
-        const tasks = await Task.find({})
-        res.send(tasks)
+        // const tasks = await Task.find({ author: req.user._id })
+        // res.send(tasks)
+
+        //Tasks using virtual
+        await req.user.populate('tasks').execPopulate()
+        res.send(req.user.tasks)
     } catch (error) {
         res.status(501).send(error)
     }
 })
 
 //Reading Single task using Async Await
-taskRouter.get('/tasks/:id', async(req, res) => {
+taskRouter.get('/tasks/:id', auth, async(req, res) => {
     const _id = req.params.id
     try {
-        const task = await Task.findById(_id)
+        // const task = await Task.findById(_id)
+        const task = await Task.findOne({ _id, author: req.user._id })
         if (!task) {
             return res.status(404).send()
         }
@@ -38,7 +48,7 @@ taskRouter.get('/tasks/:id', async(req, res) => {
 })
 
 //Updating task using Async Await
-taskRouter.patch('/tasks/:id', async(req, res) => {
+taskRouter.patch('/tasks/:id', auth, async(req, res) => {
     const allowedUpdates = ['description', 'completed']
     const updates = Object.keys(req.body)
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -49,13 +59,13 @@ taskRouter.patch('/tasks/:id', async(req, res) => {
     try {
         //const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
 
-        const task = await Task.findById(req.params.id)
-        updates.forEach((update) => task[update] = req.body[update])
-        await task.save()
-
+        const task = await Task.findOne({ _id: req.params.id, author: req.user._id })
         if (!task) {
             return res.status(404).send()
         }
+        updates.forEach((update) => task[update] = req.body[update])
+        await task.save()
+
         res.send(task)
     } catch (error) {
         res.status(400).send(error)
@@ -63,9 +73,9 @@ taskRouter.patch('/tasks/:id', async(req, res) => {
 })
 
 //Deleting Task using Async Await
-taskRouter.delete('/tasks/:id', async(req, res) => {
+taskRouter.delete('/tasks/:id', auth, async(req, res) => {
     try {
-        const task = await Task.findByIdAndRemove(req.params.id)
+        const task = await Task.findOneAndRemove({ _id: req.params.id, author: req.user._id })
         if (!task) {
             return res.status(404).send()
         }
