@@ -50,6 +50,16 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
+//This will be automatically added to all the request which uses userSchema, because express uses JSON.stringify when we use res.send and which inturn use toJSON.
+userSchema.methods.toJSON = function() {
+    const user = this
+    const userObject = user.toObject()
+    delete userObject.password
+    delete userObject.tokens
+    delete userObject.__v
+    return userObject
+}
+
 userSchema.methods.generateAuthToken = async function() {
     const user = this
     const token = await jwt.sign({ _id: user.id.toString() }, 'THISISNEWJSONWEBTOKEN')

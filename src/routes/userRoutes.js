@@ -54,6 +54,16 @@ userRouter.post('/users/logoutAll', auth, async(req, res) => {
 //Reading Multiple users using Async Await
 userRouter.get('/users', auth, async(req, res) => {
     try {
+        const users = await User.find({})
+        res.send(users)
+    } catch (error) {
+        res.status(501).send(error)
+    }
+})
+
+//Reading Multiple users using Async Await
+userRouter.get('/users/me', auth, async(req, res) => {
+    try {
         //const users = await User.find({})
         //res.send(users)
         res.send(req.user)
@@ -78,7 +88,7 @@ userRouter.get('/users/:id', async(req, res) => {
 
 
 //Updating user using Asyn Await
-userRouter.patch('/users/:id', async(req, res) => {
+userRouter.patch('/users/updateMe', auth, async(req, res) => {
     const allowedUpdates = ['name', 'age', 'email', 'password']
     const updates = Object.keys(req.body)
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
@@ -89,14 +99,9 @@ userRouter.patch('/users/:id', async(req, res) => {
     try {
         //const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
         //Above stattement mess with Mongoose Middleware, so it is okay to below statments
-
-        const user = await User.findById(req.params.id)
+        const user = req.user
         updates.forEach((update) => user[update] = req.body[update])
         await user.save()
-
-        if (!user) {
-            res.status(404).send
-        }
         res.send(user)
     } catch (error) {
         res.status(400).send(error)
@@ -104,13 +109,11 @@ userRouter.patch('/users/:id', async(req, res) => {
 })
 
 //Deleting user with Async Await
-userRouter.delete('/users/:id', async(req, res) => {
+userRouter.delete('/users/me', auth, async(req, res) => {
     try {
-        const user = await User.findByIdAndRemove(req.params.id)
-        if (!user) {
-            return res.status(404).send()
-        }
-        res.send(user)
+        //mongoose middleware to remove user that auth send through req
+        await req.user.remove()
+        res.send(req.user)
     } catch (error) {
         res.status(500).send(error)
     }
