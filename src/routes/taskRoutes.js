@@ -20,12 +20,32 @@ taskRouter.post('/tasks', auth, async(req, res) => {
 
 //Reading multiple tasks using Async Await
 taskRouter.get('/tasks', auth, async(req, res) => {
+    const match = {}
+    const sort = {}
+
+    if (req.query.completed) {
+        match.completed = req.query.completed === 'true'
+    }
+
+    if (req.query.sortBy) {
+        const parts = req.query.sortBy.split('::')
+        sort[parts[0]] = parts[1] === 'asc' ? 1 : -1
+    }
+
     try {
         // const tasks = await Task.find({ author: req.user._id })
         // res.send(tasks)
 
         //Tasks using virtual
-        await req.user.populate('tasks').execPopulate()
+        await req.user.populate({
+            path: 'tasks',
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort
+            }
+        }).execPopulate()
         res.send(req.user.tasks)
     } catch (error) {
         res.status(501).send(error)
