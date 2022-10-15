@@ -4,7 +4,7 @@ steps performed during this whole process:
 3. Run this command from powershell to keep mongodb running on local machine
     /installedSOftwares/mongodb/mongodb/installed_server_1/bin/mongod.exe --dbpath=/installedsoftwares/mongodb/mongodb-data
 4. install mongodb module with same version as your installed mongodb application
-5. 
+5. npm run dev
 
 
 
@@ -55,3 +55,9 @@ Experss Middleware
 mongoose Virtual to join two collections
 timestamps in mondoDB
 Pagination/Pagging
+
+File/Image Uploads for display picture
+Multer 
+npm i multe@1.4.1
+sharp
+npm i sharp@0.21.0
