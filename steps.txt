@@ -61,3 +61,9 @@ Multer
 npm i multe@1.4.1
 sharp
 npm i sharp@0.21.0
+
+Sending Emails using SendGrid
+npm i @sendgrid/mail@6.3.1
+
+Environment Variables
+npm i env-cmd@10.1.0 --save-dev
