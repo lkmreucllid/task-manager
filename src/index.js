@@ -24,6 +24,11 @@
      res.send()
  })
 
+ app.get('/', (req, res) => {
+
+     res.send(`APIs are working`)
+ })
+
 
  app.use(express.json())
  app.use(userRouter)
